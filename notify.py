@@ -3,6 +3,7 @@ import json
 import requests
 
 from conf import (
+    GITHUB_USERS_EXCLUDE,
     SLACK_WEBHOOK_URL,
     SLACK_WEBHOOK_USERNAME,
     SLACK_WEBHOOK_USERNAME_ICON_URL,
@@ -28,7 +29,8 @@ def notify_open_prs(prs_dict):
         comments = list(pr.get_issue_comments())
         review_started = False
         for comment in comments:
-            review_started = True
+            if comment.user.login not in GITHUB_USERS_EXCLUDE:
+                review_started = True
 
         created_at = arrow.get(pr.created_at)
         if (not len(pr.assignees) and

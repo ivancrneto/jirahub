@@ -10,6 +10,7 @@ JIRA_AUTH = {
 }
 
 GITHUB_TOKEN = os.environ['GITHUB_TOKEN']
+GITHUB_USERS_EXCLUDE = os.getenv('GITHUB_USERS_EXCLUDE').split(', ')
 
 
 SLACK_WEBHOOK_URL = os.environ['SLACK_WEBHOOK_URL']
