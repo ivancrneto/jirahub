@@ -8,6 +8,7 @@ verify_ssl = true
 [packages]
 arrow = "~=0.13"
 environs = "~= 4.1"
+pygithub = "~=1.43"
 
 [requires]
 python_version = "3.7"
