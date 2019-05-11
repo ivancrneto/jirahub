@@ -6,7 +6,8 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-arrow = "==0.13.1"
+arrow = "~=0.13"
+environs = "~= 4.1"
 
 [requires]
 python_version = "3.7"
