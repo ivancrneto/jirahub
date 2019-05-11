@@ -1,2 +1,0 @@
-arrow==0.13.1
-environs==4.1.2

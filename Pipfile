@@ -1,0 +1,13 @@
+[[source]]
+name = "jirahub"
+url = "https://pypi.org/jirahub"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+arrow = "==0.13.1"
+environs = "==4.1.2"
+
+[requires]
+python_version = "3.7"
