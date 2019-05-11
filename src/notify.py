@@ -1,24 +1,8 @@
 import arrow
 import json
-import requests
 
-from .conf import (
-    GITHUB_USERS_EXCLUDE,
-    SLACK_WEBHOOK_URL,
-    SLACK_WEBHOOK_USERNAME,
-    SLACK_WEBHOOK_USERNAME_ICON_URL,
-    SLACK_NOTIFY_CHANNEL,
-)
-
-
-def notify(text):
-    payload = dict(
-        text=text,
-        username=SLACK_WEBHOOK_USERNAME,
-        channel=SLACK_NOTIFY_CHANNEL,
-        icon_url=SLACK_WEBHOOK_USERNAME_ICON_URL,
-    )
-    requests.post(SLACK_WEBHOOK_URL, data=json.dumps(payload))
+from .clients import slack
+from .conf import GITHUB_USERS_EXCLUDE
 
 
 def notify_open_prs(prs_dict):
@@ -56,4 +40,4 @@ def notify_open_prs(prs_dict):
                 '{}: _PR created_: {}, _Code Review column at_: {} - {}\n'
             ).format(ticket.key, created_at.strftime('%m/%d/%Y %H:%M'),
                      transition_date.strftime('%m/%d/%Y %H:%M'), pr.html_url)
-        notify(text)
+        slack.notify(text)
