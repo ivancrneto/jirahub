@@ -9,6 +9,7 @@ verify_ssl = true
 arrow = "~=0.13"
 environs = "~= 4.1"
 pygithub = "~=1.43"
+jira = "*"
 
 [requires]
 python_version = "3.7"
