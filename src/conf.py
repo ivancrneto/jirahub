@@ -17,9 +17,3 @@ SLACK_WEBHOOK_URL = os.environ['SLACK_WEBHOOK_URL']
 SLACK_WEBHOOK_USERNAME =  os.environ['SLACK_WEBHOOK_USERNAME']
 SLACK_WEBHOOK_USERNAME_ICON_URL = os.environ['SLACK_WEBHOOK_USERNAME_ICON_URL']
 SLACK_NOTIFY_CHANNEL = os.environ['SLACK_NOTIFY_CHANNEL']
-
-
-try:
-    from conf_local import *
-except ImportError:
-    pass
