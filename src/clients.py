@@ -1,6 +1,6 @@
 import requests
 
-from github import Github
+from github import Github as ExternalGithub
 from jira import JIRA
 
 from conf import (
@@ -31,6 +31,26 @@ class Slack:
         requests.post(self.WEBHOOK_URL, json=payload)
 
 
-jira = JIRA(**JIRA_AUTH)
+class ProxyClient:
+    client_class = None
+
+    def __init__(self, *args, **kwargs):
+        self._client = self.client_class(*args, **kwargs)
+
+    def __getattr__(self, attr):
+        if hasattr(self._client, attr):
+            return getattr(self._client, attr)
+        return getattr(self, attr)
+
+
+class Jira(ProxyClient):
+    client_class = JIRA
+
+
+class Github(ProxyClient):
+    client_class = ExternalGithub
+
+
+jira = Jira(**JIRA_AUTH)
 github = Github(GITHUB_TOKEN)
 slack = Slack()
