@@ -46,6 +46,16 @@ class ProxyClient:
 class Jira(ProxyClient):
     client_class = JIRA
 
+    def active_sprints(boards_ids):
+        for board_id in boards_ids:
+            for sprint in self.sprints(board_id):
+                if sprint.state == 'ACTIVE':
+                    yield sprint
+
+    def issues_in_sprint(sprint):
+        jql = f'status = "Code Review" and sprint = "{sprint.name}"'
+        return self.search_issues(jql_str=jql, expand='changelog')
+
 
 class Github(ProxyClient):
     client_class = ExternalGithub

@@ -10,17 +10,11 @@ from .notify import notify_open_prs
 
 
 def check_prs_missing_reviewer():
-    boards_ids = JIRA_BOARDS.keys()
+    boards_ids = {165: {}}
     prs_dict = {}
-    for board_id in boards_ids:
-        sprints = jira.sprints(board_id)
-        for sprint in sprints:
-            if sprint.state == 'ACTIVE':
-                break
-        issues = jira.search_issues(
-            jql_str=ISSUES_JQL.format(sprint.name), expand='changelog')
 
-        for issue in issues:
+    for sprint in jira.active_sprints(boards_ids):
+        for issue in jira.issues_in_sprint(sprint):
             prs = [item.as_pull_request() for
                    item in github.search_issues(issue.key)]
             for pr in prs:
