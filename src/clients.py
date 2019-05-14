@@ -23,6 +23,7 @@ class Slack:
         self.icon_url = icon_url or SLACK_WEBHOOK_USERNAME_ICON_URL
 
     def notify(text, channel=None):
+        """Posts a simple message based on the instance configuration"""
         payload = {
             'text': text,
             'username': self.username,
@@ -39,6 +40,11 @@ class ProxyClient:
         self._client = self.client_class(*args, **kwargs)
 
     def __getattr__(self, attr):
+        """
+        Fallbacks to `_client` when the attribute does not exist in the
+        proxy class. This allows us to have helper methods in the same
+        instance of the real client APIs.
+        """
         if hasattr(self._client, attr):
             return getattr(self._client, attr)
         return getattr(self, attr)
@@ -48,6 +54,7 @@ class Jira(ProxyClient):
     client_class = JIRA
 
     def active_sprints(boards_ids=None):
+        """Generates sprints that are active under the specific `boards_ids`"""
         boards_ids = boards_ids or BOARDS_IDS
         for board_id in boards_ids:
             for sprint in self.sprints(board_id):
@@ -55,6 +62,9 @@ class Jira(ProxyClient):
                     yield sprint
 
     def issues_in_sprint(sprint):
+        """Returns all issues found in a specific sprint"""
+        # TODO: right now we're only retrieving issues in code review
+        # and we might want to change this for other stuff
         jql = f'status = "Code Review" and sprint = "{sprint.name}"'
         return self.search_issues(jql_str=jql, expand='changelog')
 
