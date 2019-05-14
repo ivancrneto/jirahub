@@ -6,24 +6,26 @@ from .conf import GITHUB_USERS_EXCLUDE
 
 
 def notify_open_prs(bundles):
-    notifiable_bundles = []
+    bundle_template = (
+        '{issue_key}: PR created {pr_created}, transitioned to code review '
+        '{review_transition} - {pr_html}')
+    bundles_texts = []
+
     for bundle in bundles:
-        if bundle.review_started:
-            notifiable_bundles.append(bundle)
+        if not bundle.pr.review_started:
+            continue
 
-    if notifiable_bundles:
-        text = '*Open PRs with no reviewers:*\n'
-        for bundle in notifiable_bundles:
-            for history in bundle.histories:
-                for transition_ in history.items:
-                    if (transition_.fromString == 'To Do' and
-                            transition_.toString == 'Code Review'):
-                        transition_date = arrow.get(history.created)
+        transition = bundle.issue.transition_date(
+            'To Do', 'Code Review')
+        transition = transition.humanize() if transition else '?'
 
-            text += (
-                '{}: _PR created_: {}, _Code Review column at_: {} - {}\n'
-            ).format(
-                bundle.key, bundle.created_at.strftime('%m/%d/%Y %H:%M'),
-                 transition_date.strftime('%m/%d/%Y %H:%M'), bundle.pr.html_url
-            )
-        slack.notify(text)
+        bundles_texts.append(bundle_template.format(
+            issue_key=bundle.issue.key,
+            pr_created=bundle.pr.created_at.humanize(),
+            review_transition=transition,
+            pr_html=bundle.pr.html_url,
+        ))
+
+    if bundles_texts:
+        slack.notify(
+            '*Open PRs with no reviewers:*\n' + '\n'.join(bundles_texts))

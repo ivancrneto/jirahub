@@ -23,30 +23,37 @@ def pack(issues, prs):
             yield Bundle(issue, pr)
 
 
-class Bundle:
+class Issue:
 
-    def __init__(self, issue, pr):
-        self._issue = issue
-        self._pr = pr
+    def __init__(self, data):
+        self._data = data
+
+    @property
+    def key(self):
+        return self._data.key
+
+    def transition_date(self, from_, to):
+        for history in self._data.changelog.histories:
+            for transition in history.items:
+                if (
+                    transition.fromString == from_
+                    and transition.toString == to
+                ):
+                    return arrow.get(history.created)
+        return None
+
+
+class PullRequest:
+
+    def __init__(self, data):
+        self._data = data
         self._comments = None
 
     def get_comments(self):
         if self._comments is not None:
             return self._comments
-        self._comments = self._pr.get_issue_comments()
+        self._comments = self._data.get_issue_comments()
         return self._comments
-
-    @property
-    def pr(self):
-        return self._pr
-
-    @property
-    def issue(self):
-        return self._issue
-
-    @property
-    def key(self):
-        return self._issue.key
 
     @property
     def has_human_comments(self):
@@ -57,15 +64,26 @@ class Bundle:
 
     @property
     def created_at(self):
-        return arrow.get(self._pr.created_at)
+        return arrow.get(self._data.created_at)
 
     @property
     def review_started(self):
         return (
-            len(self._pr.assignees)
+            len(self._data.assignees)
             or self.has_human_comments
         ) and self.created_at.shift(minutes=30) < arrow.utcnow()
 
+
+class Bundle:
+
+    def __init__(self, issue, pr):
+        self._issue = Issue(issue)
+        self._pr = PullRequest(pr)
+
     @property
-    def histories(self):
-        return self._issue.changelog.histories
+    def pr(self):
+        return self._pr
+
+    @property
+    def issue(self):
+        return self._issue
