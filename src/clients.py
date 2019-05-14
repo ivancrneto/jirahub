@@ -4,6 +4,7 @@ from github import Github as ExternalGithub
 from jira import JIRA
 
 from conf import (
+    BOARDS_IDS,
     GITHUB_TOKEN,
     JIRA_AUTH,
     SLACK_WEBHOOK_URL,
@@ -46,7 +47,8 @@ class ProxyClient:
 class Jira(ProxyClient):
     client_class = JIRA
 
-    def active_sprints(boards_ids):
+    def active_sprints(boards_ids=None):
+        boards_ids = boards_ids or BOARDS_IDS
         for board_id in boards_ids:
             for sprint in self.sprints(board_id):
                 if sprint.state == 'ACTIVE':

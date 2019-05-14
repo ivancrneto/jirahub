@@ -26,9 +26,4 @@ with env.prefixed('SLACK_'):
     SLACK_NOTIFY_CHANNEL = env.str('NOTIFY_CHANNEL')
 
 ISSUES_JQL = env.str('ISSUES_JQL')
-
-
-try:	
-    from .conf_local import *	
-except ImportError:	
-    pass
+BOARDS_IDS = {165: {}}
