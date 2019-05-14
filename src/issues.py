@@ -17,8 +17,7 @@ def check_prs_missing_reviewer():
             for item in github.search_issues(' '.join(keys))
         ]
         itertools.chain(bundles, pack(issues, prs))
-
-    notify_open_prs(prs_dict)
+    notify_open_prs(bundles)
 
 
 if __name__ == '__main__':
