@@ -5,32 +5,16 @@ from .clients import slack
 from .conf import GITHUB_USERS_EXCLUDE
 
 
-def notify_open_prs(prs_dict):
-    should_notify = []
-    for key, item in prs_dict.items():
-        pr = item['pr']
+def notify_open_prs(bundles):
+    notifiable_bundles = []
+    for bundle in bundles:
+        if bundle.review_started:
+            notifiable_bundles.append(bundle)
 
-        comments = list(pr.get_issue_comments())
-        review_started = False
-        for comment in comments:
-            if comment.user.login not in GITHUB_USERS_EXCLUDE:
-                review_started = True
-
-        created_at = arrow.get(pr.created_at)
-        if (not len(pr.assignees) and
-                not review_started and
-                created_at.shift(minutes=30) < arrow.utcnow()):
-            should_notify += [item]
-
-    if should_notify:
+    if notifiable_bundles:
         text = '*Open PRs with no reviewers:*\n'
-        for item in should_notify:
-            pr = item['pr']
-            ticket = item['ticket']
-
-            created_at = arrow.get(pr.created_at)
-            transition_date = created_at
-            for history in ticket.changelog.histories:
+        for bundle in notifiable_bundles:
+            for history in bundle.histories:
                 for transition_ in history.items:
                     if (transition_.fromString == 'To Do' and
                             transition_.toString == 'Code Review'):
@@ -38,6 +22,8 @@ def notify_open_prs(prs_dict):
 
             text += (
                 '{}: _PR created_: {}, _Code Review column at_: {} - {}\n'
-            ).format(ticket.key, created_at.strftime('%m/%d/%Y %H:%M'),
-                     transition_date.strftime('%m/%d/%Y %H:%M'), pr.html_url)
+            ).format(
+                bundle.key, bundle.created_at.strftime('%m/%d/%Y %H:%M'),
+                 transition_date.strftime('%m/%d/%Y %H:%M'), bundle.pr.html_url
+            )
         slack.notify(text)
