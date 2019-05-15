@@ -2,7 +2,7 @@ import arrow
 import json
 import requests
 
-from conf import (
+from .conf import (
     GITHUB_USERS_EXCLUDE,
     SLACK_WEBHOOK_URL,
     SLACK_WEBHOOK_USERNAME,

@@ -1,0 +1,15 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+arrow = "~=0.13"
+environs = "~= 4.1"
+pygithub = "~=1.43"
+jira = "*"
+
+[requires]
+python_version = "3.7"
