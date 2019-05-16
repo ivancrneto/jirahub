@@ -1,13 +1,13 @@
 from github import Github
 from jira import JIRA
 
-from .conf import (
+from conf import (
     GITHUB_TOKEN,
     ISSUES_JQL,
     JIRA_AUTH,
     JIRA_BOARDS,
 )
-from .notify import notify_open_prs
+from notify import notify_open_prs
 
 
 jac = JIRA(**JIRA_AUTH)

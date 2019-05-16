@@ -6,6 +6,10 @@
 * Copy `.env.example` to `.env`
 * Update `.env` values
 
+### Build
+
+* `docker build . -t jirahub:latest`
+
 ## Usage
 
-* `python src/issues.py`
+* `docker run jirahub`
